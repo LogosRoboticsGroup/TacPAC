@@ -1,0 +1,49 @@
+cff-version: 1.2.0
+title: >-
+  TacPAC: Tactile Prediction and Real-Time Action Correction in
+  World-Action Models for Contact-Rich Manipulation
+message: >-
+  If you use this software, please cite the TacPAC paper and this repository.
+type: software
+authors:
+  - family-names: Ma
+    given-names: Zipei
+  - family-names: Wei
+    given-names: Xiaofei
+  - family-names: Jiang
+    given-names: Junzhe
+  - family-names: Lu
+    given-names: Shunlin
+  - family-names: Zhang
+    given-names: Li
+repository-code: 'https://github.com/LogosRoboticsGroup/TacPAC'
+url: 'https://github.com/LogosRoboticsGroup/TacPAC'
+abstract: >-
+  TacPAC is a tactile world-action model that turns predicted future contact
+  into asynchronous, real-time corrections of an executing action chunk.
+keywords:
+  - tactile sensing
+  - world-action model
+  - contact-rich manipulation
+  - vision-language-action
+  - robot learning
+license: MIT
+version: 0.1.0
+date-released: '2026-09-04'
+preferred-citation:
+  type: article
+  title: >-
+    TacPAC: Tactile Prediction and Real-Time Action Correction in
+    World-Action Models for Contact-Rich Manipulation
+  authors:
+    - family-names: Ma
+      given-names: Zipei
+    - family-names: Wei
+      given-names: Xiaofei
+    - family-names: Jiang
+      given-names: Junzhe
+    - family-names: Lu
+      given-names: Shunlin
+    - family-names: Zhang
+      given-names: Li
+  year: 2026

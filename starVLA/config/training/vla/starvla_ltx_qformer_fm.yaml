@@ -1,0 +1,183 @@
+run_id: starvla-ltx-qformer-fm
+run_root_dir: results/Checkpoints
+seed: 42
+trackers: [jsonl]
+is_debug: false
+
+framework:
+  name: LTXQformerFM
+  torch_dtype: bfloat16
+  skip_dit_load_from_pretrain: false
+  enable_prompt_cache: true
+  enable_cudnn_benchmark: true
+  detach_condition_features: false
+
+  video_model:
+    pretrained_model_name_or_path: playground/Pretrained_models/LTX-Video
+    n_prev: 1
+    num_frames: 8
+    fps: 24
+    num_inference_steps: 50
+    do_classifier_free_guidance: true
+    caption_dropout_p: 0.06
+    use_color_jitter: true
+    guidance_scale: 3.0
+    noise_seed: 42
+    noise_to_condition_frames: 0.1
+    flow_weighting_scheme: none
+    flow_logit_mean: 0.0
+    flow_logit_std: 1.0
+    flow_mode_scale: 1.29
+    repeated_diffusion_steps: 1
+    text_context_len: 128
+    load_text_encoder: true
+    prompt_template: "A video recorded from a robot's point of view executing the following instruction: {task}"
+
+    diffusion_model:
+      model_path: playground/Pretrained_models/RobotLTXVIdeo/pretrain_ltxvideo_0223_gpu64.pt
+      skip_load_from_pretrain: ${framework.skip_dit_load_from_pretrain}
+      config:
+        activation_fn: gelu-approximate
+        attention_bias: true
+        attention_head_dim: 64
+        attention_out_bias: true
+        caption_channels: 4096
+        cross_attention_dim: 2048
+        in_channels: 128
+        norm_elementwise_affine: false
+        norm_eps: 1.0e-6
+        num_attention_heads: 32
+        num_layers: 28
+        use_intervention_condition: false
+        default_intervention_ratio: 1.0
+        out_channels: 128
+        patch_size: 1
+        patch_size_t: 1
+        qk_norm: rms_norm_across_heads
+        cross_view_attn: true
+    scheduler:
+      base_image_seq_len: 1024
+      base_shift: 0.95
+      max_image_seq_len: 4096
+      max_shift: 2.05
+      shift_terminal: 0.1
+      use_dynamic_shifting: true
+      invert_sigmas: false
+      num_train_timesteps: 1000
+      shift: 1.0
+      use_beta_sigmas: false
+      use_exponential_sigmas: false
+      use_karras_sigmas: false
+
+  layer_qformer:
+    qformer_start_layer: 0
+    qformer_end_layer: 28
+    num_query_tokens: 64
+    input_dim: 2048
+    ouptput_dim: 512
+
+  action_model:
+    model_path: null
+    skip_load_from_pretrain: ${framework.skip_dit_load_from_pretrain}
+    max_num_embodiments: 200
+    action_model_type: DiT-B
+    hidden_size: 1024
+    add_pos_embed: true
+    max_seq_len: 1024
+    action_dim: 100
+    state_dim: 100
+    action_horizon: 32
+    repeated_diffusion_steps: 1
+    state_dropout_p: 0.0
+    noise_beta_alpha: 1.5
+    noise_beta_beta: 1.0
+    noise_s: 0.999
+    num_timestep_buckets: 1000
+    num_inference_timesteps: 4
+    num_target_vision_tokens: 32
+    use_intervention_condition: false
+    default_intervention_ratio: 1.0
+    diffusion_model_cfg:
+      input_embedding_dim: 768
+      attention_head_dim: 64
+      num_attention_heads: 12
+      num_layers: 16
+      cross_attention_dim: 512
+      output_dim: 1024
+      dropout: 0.2
+      final_dropout: true
+      interleave_self_attention: true
+      norm_type: ada_norm
+      positional_embeddings: null
+
+  loss:
+    lambda_video: 1.0
+    lambda_action: 1.0
+
+datasets:
+  vla_data:
+    dataset_py: vla_datasets
+    data_mix: libero_all
+
+    action_horizon: ${framework.action_model.action_horizon}
+    action_pad_size: ${framework.action_model.action_dim}
+    state_pad_size: ${framework.action_model.state_dim}
+    disable_state: true
+
+    image_size: [256, 256]
+    use_future_frames: true
+    num_future_frames: ${framework.video_model.num_frames}
+    future_frame_stride: 4
+    use_decord: true
+    text_embedding_cache_dir: data/text_embeds_cache/libero_ltx
+    require_text_embedding_cache: false
+    text_context_len: ${framework.video_model.text_context_len}
+    text_cache_encoder_id: ltx-video-t5
+    text_context_prompt_template: ${framework.video_model.prompt_template}
+
+    split_strategy: episode_ratio
+    eval_ratio: 0.02
+    split_seed: 42
+
+    per_device_batch_size: 8
+    eval_per_device_batch_size: 4
+    num_workers: 12
+
+trainer:
+  epochs: 100
+  max_train_steps: 100000
+  num_warmup_steps: 1000
+  save_interval: 20000
+  eval_interval: 1000
+  logging_frequency: 100
+  learning_rate:
+    base: 1.0e-05
+    action_model: 1.0e-04
+    layer_qformer: 1.0e-04
+    diffusion_model: 1.0e-05
+  lr_scheduler_type: cosine_with_min_lr
+  scheduler_specific_kwargs:
+    min_lr: 1.0e-06
+  freeze_modules: ''
+  loss_scale:
+    vla: 1.0
+    vlm: 0.1
+  max_grad_norm: 1.0
+  warmup_ratio: 0.1
+  weight_decay: 0.0
+  gradient_clipping: 1.0
+  gradient_accumulation_steps: 1
+  knowledge_isolation: false
+  enable_gradient_checkpointing: false
+  enable_mixed_precision_training: true
+  enable_compile: true
+  resume_from_checkpoint: latest
+  init_from_stage_checkpoint: playground/Pretrained_models/RobotLTXVIdeo/pretrain_ltxqformerfm_wostate.pt
+
+  optimizer:
+    name: AdamW
+    betas: [0.9, 0.95]
+    eps: 1.0e-08
+    weight_decay: 1.0e-08
+
+  save_format: pt

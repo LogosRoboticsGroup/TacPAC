@@ -1,0 +1,184 @@
+run_id: starvla-wam
+run_root_dir: results/Checkpoints
+seed: 42
+trackers: [jsonl]
+is_debug: false
+
+framework:
+  name: WanMoT
+  torch_dtype: bfloat16
+  skip_dit_load_from_pretrain: false
+  concat_multi_camera: horizontal
+  view_image_size: [256, 256]
+  tactile_image_size: [128, 128]  # 每列竖叠 view_h//tac_h 个触觉视图;等高即一列一个(等宽布局)
+  time_alignment:
+    enabled: false
+
+  video_model:
+    model_id: Wan-AI/Wan2.2-TI2V-5B
+    tokenizer_model_id: Wan-AI/Wan2.1-T2V-1.3B
+    tokenizer_max_len: 128
+    load_text_encoder: true
+    redirect_common_files: true
+
+    dit_path: playground/Pretrained_models/Wan2.2-TI2V-5B
+    vae_path: playground/Pretrained_models/Wan2.2-TI2V-5B/Wan2.2_VAE.pth
+    text_encoder_path: playground/Pretrained_models/Wan2.2-TI2V-5B/models_t5_umt5-xxl-enc-bf16.pth
+    tokenizer_path: playground/Pretrained_models/umt5-xxl
+
+    z_dim: 48
+    vae_dim: 160
+    enable_prompt_cache: true
+    prefer_cached_text_context: true
+    text_mask_padding_as_valid: true
+    prompt_template: "A video recorded from a robot's point of view executing the following instruction: {task}"
+
+    config:
+      has_image_input: false
+      patch_size: [1, 2, 2]
+      in_dim: 48
+      hidden_dim: 3072
+      ffn_dim: 14336
+      freq_dim: 256
+      text_dim: 4096
+      out_dim: 48
+      num_heads: 24
+      attn_head_dim: 128
+      num_layers: 30
+      eps: 1.0e-06
+      seperated_timestep: true
+      require_clip_embedding: false
+      require_vae_embedding: false
+      fuse_vae_embedding_in_latents: true
+      action_conditioned: false
+      action_group_causal_mask_mode: group_diagonal
+      video_attention_mask_mode: first_frame_causal
+      use_gradient_checkpointing: ${trainer.enable_gradient_checkpointing}
+
+    scheduler:
+      train_shift: 5.0
+      infer_shift: 5.0
+      num_train_timesteps: 1000
+
+    text_encoder_kwargs:
+      dim: 4096
+      dim_attn: 4096
+      dim_ffn: 10240
+      num_heads: 64
+      num_layers: 24
+      num_buckets: 32
+      shared_pos: false
+      dropout: 0.1
+
+  action_model:
+    action_horizon: 32
+    action_dim: 7
+    state_dim: 8
+    num_inference_steps: 10
+    model_path: results/Checkpoints/WanMoT/ActionExpert_linear_interp_Wan22_alphascale_1024hdim.pt
+    skip_load_from_pretrain: ${framework.skip_dit_load_from_pretrain}
+    supervision:
+      target: action_space
+      weight_mode: none
+
+    config:
+      action_dim: ${framework.action_model.action_dim}
+      hidden_dim: 1024
+      ffn_dim: 4096
+      num_heads: 24
+      attn_head_dim: 128
+      num_layers: 30
+      text_dim: ${framework.video_model.config.text_dim}
+      freq_dim: 256
+      eps: 1.0e-06
+      use_gradient_checkpointing: ${trainer.enable_gradient_checkpointing}
+
+    scheduler:
+      train_shift: 5.0
+      infer_shift: 5.0
+      num_train_timesteps: 1000
+      sample_mode: beta_tau
+      noise_beta_alpha: 1.5
+      noise_beta_beta: 1.0
+      noise_s: 0.999
+
+  # Async tactile expert (WanMoTJointTacExpert only): single-pass corrector reading the
+  # joint prefill KV cache; trained in phase 2 with the base (mot) frozen.
+  tactile_model:
+    init_from_action_expert: true
+    config:
+      action_dim: ${framework.action_model.action_dim}
+      hidden_dim: 1024
+      ffn_dim: 4096
+      num_heads: 24
+      attn_head_dim: 128
+      num_layers: 30
+      freq_dim: 256
+      eps: 1.0e-06
+      use_gradient_checkpointing: ${trainer.enable_gradient_checkpointing}
+
+  loss:
+    lambda_video: 1.0
+    lambda_action: 1.0
+
+datasets:
+  vla_data:
+    dataset_py: vla_datasets
+    data_mix: libero_all
+    action_horizon: ${framework.action_model.action_horizon}
+    action_pad_size: ${framework.action_model.action_dim}
+    state_pad_size: ${framework.action_model.state_dim}
+    disable_state: false
+    image_size: ${framework.view_image_size}
+    use_future_frames: true
+    num_future_frames: 8
+    future_frame_stride: 4
+    use_decord: true
+    tactile_residual_mode: stress  # signed | stress;推理端 TactileInferencePreprocessor 自动跟随
+    tactile_offsets_per_sample: 0  # >0: emit `tactile_now`/`tactile_offset` for tactile-expert training
+    vlm_obs_delay: 0
+    text_embedding_cache_dir: data/text_embeds_cache/libero
+    require_text_embedding_cache: false
+    text_context_len: ${framework.video_model.tokenizer_max_len}
+    text_cache_encoder_id: wan22ti2v5b
+    text_context_prompt_template: ${framework.video_model.prompt_template}
+    per_device_batch_size: 1
+    split_strategy: episode_ratio
+    eval_ratio: 0.02
+    split_seed: 42
+    eval_per_device_batch_size: 4
+    num_workers: 8
+
+trainer:
+  epochs: 100
+  max_train_steps: 100000
+  num_warmup_steps: 5000
+  save_interval: 5000
+  eval_interval: 1000
+  logging_frequency: 10
+  learning_rate:
+    base: 1.0e-04
+  lr_scheduler_type: cosine_with_min_lr
+  scheduler_specific_kwargs:
+    min_lr: 1.0e-06
+  freeze_modules: ''
+  max_grad_norm: 1.0
+  warmup_ratio: 0.05
+  weight_decay: 1.0e-05
+  gradient_clipping: 1.0
+  gradient_accumulation_steps: 1
+  # If set, overrides the above to keep the global batch constant across GPU counts:
+  # global_batch_size // (per_device_batch_size * num_gpus). Requires deepspeeds ga "auto".
+  global_batch_size: null
+  knowledge_isolation: false
+  enable_gradient_checkpointing: true
+  enable_mixed_precision_training: true
+  enable_compile: false
+  resume_from_checkpoint: null
+  init_from_stage_checkpoint: null
+
+  optimizer:
+    name: AdamW
+    betas: [0.9, 0.95]
+    eps: 1.0e-08
+    weight_decay: 1.0e-05

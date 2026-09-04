@@ -1,0 +1,80 @@
+run_id: multiview_wan_video
+run_root_dir: results/Checkpoints
+seed: 42
+trackers: [jsonl]
+is_debug: false
+
+framework:
+  name: MultiViewWanVideo
+  wan_video:
+    dit_path: playground/Pretrained_models/Wan2.2-TI2V-5B
+    vae_path: playground/Pretrained_models/Wan2.2-TI2V-5B/Wan2.2_VAE.pth
+    text_encoder_path: playground/Pretrained_models/Wan2.2-TI2V-5B/models_t5_umt5-xxl-enc-bf16.pth
+    tokenizer_path: playground/Pretrained_models/umt5-xxl
+
+    model_type: ti2v
+    in_dim: 48
+    dim: 3072
+    ffn_dim: 14336
+    out_dim: 48
+    num_heads: 24
+    num_layers: 30
+
+    vae_z_dim: 48
+    vae_dim: 160
+
+    num_inference_steps: 16
+    noise_beta_alpha: 1.5
+    noise_beta_beta: 1.0
+    noise_shift: 3.0
+    guidance_scale: 3.0
+    use_lora: false
+
+    inference_scheduler_kwargs:
+      shift: 3.0
+
+    target_height: 256
+    target_width: 256
+
+datasets:
+  video_data:
+    dataset_py: video_datasets
+    data_mix: libero_all
+    target_fps: 10.0
+    image_size: [256, 256]
+    num_frames: 33
+    resize_method: center_crop_resize
+    per_device_batch_size: 4
+    split_strategy: episode_ratio
+    eval_ratio: 0.02
+    split_seed: 42
+    eval_per_device_batch_size: 4
+
+trainer:
+  epochs: 100
+  max_train_steps: 100000
+  num_warmup_steps: 5000
+  save_interval: 5000
+  eval_interval: 100
+  learning_rate:
+    base: 1.0e-05
+  lr_scheduler_type: cosine_with_min_lr
+  scheduler_specific_kwargs:
+    min_lr: 1.0e-06
+  freeze_modules: ''
+  max_grad_norm: 1.0
+  warmup_ratio: 0.05
+  weight_decay: 1.0e-05
+  logging_frequency: 10
+  gradient_clipping: 1.0
+  gradient_accumulation_steps: 1
+
+  optimizer:
+    name: AdamW
+    betas: [0.9, 0.95]
+    eps: 1.0e-08
+    weight_decay: 1.0e-05
+  enable_compile: false
+  resume_from_checkpoint: null
+  enable_gradient_checkpointing: true
+  enable_mixed_precision_training: true
