@@ -6,6 +6,7 @@
   <a href="README.md">English</a> ·
   <a href="#安装">安装</a> ·
   <a href="#训练">训练</a> ·
+  <a href="#致谢">致谢</a> ·
   <a href="#引用">引用</a>
 </p>
 
@@ -172,6 +173,15 @@ python -m unittest \
 GPU 端到端 smoke test 位于 `scripts/test/smoke_tac_expert_gpu.py` 和
 `scripts/test/smoke_stateful_tactile_server_gpu.py`。
 
+<a id="致谢"></a>
+
+## 🙏 致谢
+
+TacPAC 的开发深受以下优秀开源工作的启发：[StarVLA](https://github.com/starVLA/starVLA)、
+[FastWAM](https://github.com/yuantianyuan01/FastWAM)、
+[T-Rex](https://github.com/ZhuoyangLiu2005/T-Rex) 和
+[Dream-Tac](https://github.com/LYFCLOUDFAN/Dream-Tac)。
+
 <a id="引用"></a>
 
 ## 📝 引用
@@ -185,8 +195,7 @@ GPU 端到端 smoke test 位于 `scripts/test/smoke_tac_expert_gpu.py` 和
 }
 ```
 
-TacPAC 基于 [StarVLA](https://github.com/starVLA/starVLA) 开发。使用本项目时，也请引用上游
-框架和实验所使用的 backbone。
+使用本项目时，也请引用上游框架和实验所使用的 backbone。
 
 ## ⚖️ 许可证
 

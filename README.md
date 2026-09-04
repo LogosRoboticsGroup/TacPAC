@@ -6,6 +6,7 @@
   <a href="README-zh.md">中文</a> ·
   <a href="#installation">Installation</a> ·
   <a href="#training">Training</a> ·
+  <a href="#acknowledgements">Acknowledgements</a> ·
   <a href="#citation">Citation</a>
 </p>
 
@@ -212,6 +213,16 @@ python -m unittest \
 GPU end-to-end smoke tests are available in `scripts/test/smoke_tac_expert_gpu.py` and
 `scripts/test/smoke_stateful_tactile_server_gpu.py`.
 
+<a id="acknowledgements"></a>
+
+## 🙏 Acknowledgements
+
+TacPAC is greatly inspired by the following outstanding contributions to the open-source
+community: [StarVLA](https://github.com/starVLA/starVLA),
+[FastWAM](https://github.com/yuantianyuan01/FastWAM),
+[T-Rex](https://github.com/ZhuoyangLiu2005/T-Rex), and
+[Dream-Tac](https://github.com/LYFCLOUDFAN/Dream-Tac).
+
 <a id="citation"></a>
 
 ## 📝 Citation
@@ -228,8 +239,7 @@ preprint is public.
 }
 ```
 
-TacPAC is built on [StarVLA](https://github.com/starVLA/starVLA). Please also cite the upstream
-framework and the backbone models used in your experiments.
+Please also cite the upstream framework and backbone models used in your experiments.
 
 ## ⚖️ License
 
