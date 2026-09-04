@@ -6,8 +6,7 @@
   <a href="README.md">English</a> ·
   <a href="#安装">安装</a> ·
   <a href="#训练">训练</a> ·
-  <a href="#致谢">致谢</a> ·
-  <a href="#引用">引用</a>
+  <a href="#推理">推理</a>
 </p>
 
 <p align="center">
@@ -146,6 +145,8 @@ NPROC_PER_NODE=8 bash scripts/vla/train_WanMoTJoint-TacExpert.sh \
   flexiv_plug_4views \
   results/Checkpoints/vla/<stage1-run>/final_model/pytorch_model.pt
 ```
+
+<a id="推理"></a>
 
 ## ⚡ 推理
 

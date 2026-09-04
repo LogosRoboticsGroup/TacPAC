@@ -6,8 +6,7 @@
   <a href="README-zh.md">中文</a> ·
   <a href="#installation">Installation</a> ·
   <a href="#training">Training</a> ·
-  <a href="#acknowledgements">Acknowledgements</a> ·
-  <a href="#citation">Citation</a>
+  <a href="#inference">Inference</a>
 </p>
 
 <p align="center">
@@ -176,6 +175,8 @@ NPROC_PER_NODE=8 bash scripts/vla/train_WanMoTJoint-TacExpert.sh \
 
 Stage 2 freezes the base MoT and proprioceptive encoder, initializes the tactile expert from the
 action expert, and trains residual corrections against plans produced by the frozen stage-1 model.
+
+<a id="inference"></a>
 
 ## ⚡ Inference
 
