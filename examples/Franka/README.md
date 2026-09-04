@@ -90,8 +90,6 @@ Complete example code:
 
 ## Overall Architecture
 
-![](../../assets/starVLA_PolicyServer.png)
-
 **Core workflow:**
 1. The client reads multi-view camera images (`np.ndarray`, `uint8`, `(H, W, 3)`).
 2. The client sends images and a language instruction to the server over WebSocket.

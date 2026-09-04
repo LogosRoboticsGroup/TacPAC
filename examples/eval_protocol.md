@@ -10,10 +10,6 @@ StarVLA standardizes the inference pipeline for real-robot or simulation evaluat
 
 The StarVLA framework uses a client-server architecture to separate the Evaluation Environment (Client) from the Policy Server (Model).
 
-![](../assets/starVLA_PolicyServer.png)
-
-
-
 <details close>
 <summary><b>Component Description </b></summary>
 
@@ -58,9 +54,6 @@ while True:
 
 
 ### PolicyClient Interface Design
-
-![](../assets/starVLA_PolicyInterface.png)
-
 
 The [`*2model_interface.py`](./LIBERO/eval_files/model2libero_client.py) interface is designed to wrap and abstract any variations originating from the simulation or real-world environment. It also supports user-defined controllers, such as converting delta actions to absolute joint positions.
 

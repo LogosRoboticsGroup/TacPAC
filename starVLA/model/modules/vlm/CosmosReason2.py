@@ -124,7 +124,7 @@ if __name__ == "__main__":
             "content": [
                 {
                     "type": "image",
-                    "image": "assets/starvla_LIBERO.png",
+                    "image": "assets/tacpac_teaser.png",
                 },
                 {"type": "text", "text": "What is the robot most likely to do?"},
             ],
@@ -155,5 +155,4 @@ if __name__ == "__main__":
     print(SEPARATOR)
 
     print("Done!")
-
 
