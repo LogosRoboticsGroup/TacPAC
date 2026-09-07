@@ -10,6 +10,7 @@
 </p>
 
 <p align="center">
+  <a href="https://arxiv.org/pdf/2609.05266"><img src="https://img.shields.io/badge/arXiv-2609.05266-b31b1b?logo=arxiv" alt="arXiv:2609.05266"></a>
   <img src="https://img.shields.io/badge/Python-3.10+-3776AB?logo=python&logoColor=white" alt="Python 3.10+">
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-green.svg" alt="MIT License"></a>
   <img src="https://img.shields.io/badge/Robot-Flexiv_Rizon_4-blue" alt="Flexiv Rizon 4">
@@ -30,8 +31,9 @@ and the action representation conditioned on that prediction. Each correction is
 over this cache, so tactile feedback can update an active plan without regenerating the full action
 chunk.
 
-> The paper, datasets, and checkpoints are being prepared for public release. This repository
-> currently contains the model, training, preprocessing, deployment, and test code.
+> The [paper](https://arxiv.org/pdf/2609.05266) is available on arXiv. Datasets and checkpoints
+> are being prepared for public release. This repository currently contains the model, training,
+> preprocessing, deployment, and test code.
 
 ## ✨ Highlights
 
@@ -228,15 +230,15 @@ community: [StarVLA](https://github.com/starVLA/starVLA),
 
 ## 📝 Citation
 
-If you find TacPAC useful, please cite the paper. The archival identifier will be added when the
-preprint is public.
+If you find TacPAC useful, please cite our [paper](https://arxiv.org/pdf/2609.05266).
 
 ```bibtex
 @article{ma2026tacpac,
   title   = {TacPAC: Tactile Prediction and Real-Time Action Correction in World-Action Models for Contact-Rich Manipulation},
   author  = {Ma, Zipei and Wei, Xiaofei and Jiang, Junzhe and Lu, Shunlin and Zhang, Li},
   year    = {2026},
-  journal = {arXiv preprint}
+  journal = {arXiv preprint arXiv:2609.05266},
+  url     = {https://arxiv.org/abs/2609.05266}
 }
 ```
 

@@ -47,3 +47,6 @@ preferred-citation:
     - family-names: Zhang
       given-names: Li
   year: 2026
+  journal: arXiv
+  url: 'https://arxiv.org/abs/2609.05266'
+  doi: 10.48550/arXiv.2609.05266

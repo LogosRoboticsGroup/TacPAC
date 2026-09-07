@@ -10,6 +10,10 @@
 </p>
 
 <p align="center">
+  <a href="https://arxiv.org/pdf/2609.05266"><img src="https://img.shields.io/badge/arXiv-2609.05266-b31b1b?logo=arxiv" alt="arXiv:2609.05266"></a>
+</p>
+
+<p align="center">
   <img src="assets/tacpac_teaser.png" width="100%" alt="TacPAC 方法概览与定性结果">
 </p>
 
@@ -22,8 +26,8 @@ TacPAC 是一个用于接触密集型机器人操作的触觉世界-动作模型
 在该预测条件下生成的动作表征。每次修正只需对固定缓存做一次前向计算，无需重新生成整个
 动作块。
 
-> 论文、数据集和 checkpoint 正在整理并将后续发布。目前仓库包含模型、训练、触觉预处理、
-> 部署协议和测试代码。
+> [论文](https://arxiv.org/pdf/2609.05266)已在 arXiv 发布。数据集和 checkpoint 正在整理并将后续发布。
+> 目前仓库包含模型、训练、触觉预处理、部署协议和测试代码。
 
 ## ✨ 核心特点
 
@@ -187,12 +191,15 @@ TacPAC 的开发深受以下优秀开源工作的启发：[StarVLA](https://gith
 
 ## 📝 引用
 
+如果 TacPAC 对你的研究有帮助，请引用我们的[论文](https://arxiv.org/pdf/2609.05266)。
+
 ```bibtex
 @article{ma2026tacpac,
   title   = {TacPAC: Tactile Prediction and Real-Time Action Correction in World-Action Models for Contact-Rich Manipulation},
   author  = {Ma, Zipei and Wei, Xiaofei and Jiang, Junzhe and Lu, Shunlin and Zhang, Li},
   year    = {2026},
-  journal = {arXiv preprint}
+  journal = {arXiv preprint arXiv:2609.05266},
+  url     = {https://arxiv.org/abs/2609.05266}
 }
 ```
 
